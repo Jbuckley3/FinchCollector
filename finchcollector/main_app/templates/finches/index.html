@@ -3,13 +3,13 @@
 {% block content %}
   <h1>Finch List</h1>
 
-  {% for finch in Finches %}
+  {% for finch in finches %}
     <div class="card">
       <a href="{% url 'finch_detail' finch.id %}">
         <div class="card-content">
           <span class="card-title">{{ finch.name }}</span>
           <p>Species: {{ finch.species }}</p>
-          <p>color: {{ finch.color }}</p>
+          <p>Color: {{ finch.color }}</p>
           <!-- Add more attributes as needed -->
         </div>
       </a>
