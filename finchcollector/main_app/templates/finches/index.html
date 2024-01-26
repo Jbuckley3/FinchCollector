@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}All Finches{% endblock %}
+
+{% block content %}
+    <h1 class="mt-4">All Finches</h1>
+
+    <ul class="collection">
+        {% for finch in finches %}
+            <li class="collection-item">
+                {{ finch.name }} - Color: {{ finch.color }}, Size: {{ finch.size }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
