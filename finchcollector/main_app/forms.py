@@ -1,8 +1,7 @@
-from django import forms
-from .models import Finch
+from django.forms import ModelForm
+from .models import Feeding
 
-class FinchForm(forms.ModelForm):
+class FeedingForm(ModelForm):
     class Meta:
-        model = Finch
-        fields = ['name', 'color', 'size']
-       
+        model = Feeding
+        fields = ['date', 'meal']

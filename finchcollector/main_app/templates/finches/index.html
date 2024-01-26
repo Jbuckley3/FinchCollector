@@ -1,15 +1,22 @@
 {% extends 'base.html' %}
 
-{% block title %}All Finches{% endblock %}
-
 {% block content %}
-    <h1 class="mt-4">All Finches</h1>
+  <h1>Finch List</h1>
 
-    <ul class="collection">
-        {% for finch in finches %}
-            <li class="collection-item">
-                {{ finch.name }} - Color: {{ finch.color }}, Size: {{ finch.size }}
-            </li>
-        {% endfor %}
-    </ul>
+  {% for finch in Finches %}
+    <div class="card">
+      <a href="{% url 'finch_detail' finch.id %}">
+        <div class="card-content">
+          <span class="card-title">{{ finch.name }}</span>
+          <p>Species: {{ finch.species }}</p>
+          <p>color: {{ finch.color }}</p>
+          <!-- Add more attributes as needed -->
+        </div>
+      </a>
+      <a href="{% url 'finch_update' finch.id %}">Edit</a>
+      <a href="{% url 'finch_delete' finch.id %}">Delete</a>
+    </div>
+  {% endfor %}
+
+  <a href="{% url 'finch_create' %}">Add Finch</a>
 {% endblock %}

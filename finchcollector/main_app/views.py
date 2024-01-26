@@ -2,30 +2,20 @@ from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
-from .models import Finch
-from .forms import FinchForm
-from django.http import HttpResponse
+from .models import Finch, Toy
+from .forms import FeedingForm
+from django.urls import reverse
 
+def home(request):
+    return render(request, 'home.html')
 
-# Home view
-
-
-# index view - shows all the cats at '/cats'
-def finches_index(request):
-    # collect our objects from the database
-    # this uses the objects object on the Cat model class
-    # the objects object has a method called all
-    # all grabs all of the entities using the parent model(in this case, Cat)
-    Finches = Finch.objects.all()
-    # print(cats)
-    # for cat in cats:
-    #     print(cat)
-    # just like in ejs, we can pass some data to our views
-    return render(request, '/Users/joshbuckley/sei/ga-code/django-env/finch-collector/finchcollector/main_app/templates/finches/index.html', { 'Finches': Finches })
-
-# About view
 def about(request):
     return render(request, 'about.html')
+
+# index view - shows all the finches at '/finches'
+def finches_index(request):
+    finches = Finch.objects.all()
+    return render(request, 'finches/index.html', {'finches': finches})
 
 # Finch list view
 class FinchListView(ListView):
@@ -33,21 +23,21 @@ class FinchListView(ListView):
     template_name = 'main_app/finch_list.html'
 
 # Finch detail view
-def finch_detail(request, finch_id):
-    finch = Finch.objects.get(id=finch_id)
-    return render(request, '/Users/joshbuckley/sei/ga-code/django-env/finch-collector/finchcollector/main_app/templates/finches/detail.html', {'finch': finch})
+class FinchDetailView(DetailView):
+    model = Finch
+    template_name = 'finches/detail.html'
 
 # Finch create view
 class FinchCreateView(CreateView):
     model = Finch
-    form_class = FinchForm
+    fields = ['name', 'color', 'size']
     template_name = 'main_app/finch_form.html'
     success_url = '/finches/'  # Adjust this URL as needed
 
 # Finch update view
 class FinchUpdateView(UpdateView):
     model = Finch
-    form_class = FinchForm
+    fields = ['name', 'color', 'size']
     template_name = 'main_app/finch_form.html'
     success_url = '/finches/'  # Adjust this URL as needed
 
@@ -57,17 +47,35 @@ class FinchDeleteView(DeleteView):
     template_name = 'main_app/finch_confirm_delete.html'
     success_url = '/finches/'  # Adjust this URL as needed
 
+# Add this new view for adding a feeding to a finch
+def add_finch_feeding(request, finch_id):
+    form = FeedingForm(request.POST)
+    if form.is_valid():
+        new_feeding = form.save(commit=False)
+        new_feeding.finch_id = finch_id
+        new_feeding.save()
+    return redirect('finch_detail', finch_id=finch_id)
 
+# Toy views
+class ToyList(ListView):
+    model = Toy
+    template_name = 'toys/index.html'
 
-def all_finches(request):
-    finches = Finch.objects.all()
-    return render(request, 'finches/index.html', {'finches': finches})
+class ToyDetail(DetailView):
+    model = Toy
+    template_name = 'toys/detail.html'
 
+class ToyCreate(CreateView):
+    model = Toy
+    fields = ['name', 'color']
 
+    def form_valid(self, form):
+        return super().form_valid(form)
 
-# index view - shows all the finches at '/finches'
-def all_finches(request):
-    # collect finches from the database
-    finches = Finch.objects.all()
-    # pass the finches data to the template
-    return render(request, 'finches/index.html', { 'finches': finches })
+class ToyUpdate(UpdateView):
+    model = Toy
+    fields = ['name', 'color']
+
+class ToyDelete(DeleteView):
+    model = Toy
+    success_url = '/toys'
